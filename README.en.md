@@ -1,38 +1,59 @@
-# 睿思  RAG  知识问答平台
+# 睿思 RAG 知识问答平台
 
-#### Description
-一个面向本地私有知识库的 Agentic RAG 智能问答系统。不同于传统 RAG 所采用的“检索→生成”单链路架构，
-本系统引入了多工具编排、对话记忆管理以及自我反思机制，使大模型能够主动评估检索质量、调用外部工具以
-补充知识，并跨会话理解上下文，从而实现“像人一样思考”的问答体验。
+一个面向本地私有知识库的 **Agentic RAG 智能问答系统**。不同于传统 RAG 所采用的"检索 → 生成"单链路架构，
+本系统引入了多工具编排、对话记忆管理以及自我反思机制，使大模型能够主动评估检索质量、调用外部工具以补
+充知识，并跨会话理解上下文，从而实现"像人一样思考"的问答体验。
 
-#### Software Architecture
-Software architecture description
+---
 
-#### Installation
+## 核心特性
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 🧠 Agentic 架构设计
 
-#### Instructions
+以 LangChain.js 为核心编排层，构建了 **"理解 → 规划 → 执行 → 反思"** 四阶段 Agent 主循环。当查询进入系统
+时，首先进行意图分析，以决定采用纯 RAG 检索、多工具调用，抑或两者结合的策略；在检索结果不足时，系统将
+主动调用外部工具以补充知识。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 🔍 Self-RAG 反思机制
 
-#### Contribution
+引入 critique 模型对检索结果进行评分，用以判断召回片段与问题的相关性。对于相关性较低的评分，系统将触发
+二次检索或扩展查询，从而解决通用大模型难以理解特定本地长文本并容易产生幻觉的核心问题。
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+### 📚 私有知识库构建
+
+支持 EPUB 格式小说文本的解析，采用"按章节粗切"与"固定字符细切"相结合的双级切片策略，共生成 1600
+余个切片，兼顾上下文连续性与检索粒度。基于 qwen-embedding-v3 向量化模型将切片入库至 Milvus 向量
+数据库，并采用 IVF 索引以加速相似度检索。
+
+### 🔗 多模态工具调用
+
+深度集成 MCP 协议，对接高德地图、天气查询、网络搜索等外部工具。例如，当用户询问"贾雨村离开京城
+后去了哪个城市"时，系统将通过 RAG 链路召回相关段落，并自动调用高德地图 API 查询地名的真实地理坐
+标，与原文进行交叉验证后生成附带地理锚点的回答。
+
+### 💬 会话记忆管理
+
+基于 sessionId 实现多会话隔离。Memory 模块负责维护对话历史与关键实体，并支持上下文压缩与摘要功
+能，从而防止超出 LLM 的上下文窗口限制。用户中途切换 session 时，仍可携带历史记忆继续追问。
+
+### 🏗️ 全栈工程化
+
+后端采用 NestJS、LangChain.js、Milvus、qwen-plus 及 qwen-embedding-v3，全程使用 TypeScript 与
+Zod 进行运行时校验，实现端到端类型安全。
+
+---
+
+## 技术栈
+
+| 层次 | 技术 |
+|------|------|
+| 框架 | NestJS |
+| 编排 | LangChain.js |
+| 向量数据库 | Milvus (Zilliz Cloud) |
+| 大语言模型 | qwen-plus |
+| Embedding 模型 | qwen-embedding-v3 (1024 维) |
+| 类型校验 | TypeScript + Zod |
+| 外部工具 | MCP 协议（高德地图 / 天气 / 搜索） |
+| 包管理 | pnpm |
 
 
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
