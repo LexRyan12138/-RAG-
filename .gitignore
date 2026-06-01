@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Large binary / media files
+*.epub
+*.pdf
+*.mobi
